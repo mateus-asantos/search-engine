@@ -1,6 +1,19 @@
 import React, { Component } from 'react'
 import { Paper, Fade, Typography, TextField, Popper, MenuItem } from '@material-ui/core'
+import { withStyles } from '@material-ui/core/styles';
 import axios from 'axios'
+import zIndex from '@material-ui/core/styles/zIndex';
+
+const styles = (theme) => ({
+    searchField: {
+        width: 200
+    },
+    dropdown: {
+        borderRadius:0,
+        width:200,
+        zIndex:1
+    },
+  });
 
 class SearchField extends Component {
     constructor(props) {
@@ -59,14 +72,15 @@ class SearchField extends Component {
     }
 
     render() {
+        const classes = this.props
         console.log('suggestions', this.state.suggestions)
         return (
             <div>
                 <Typography variant='h3'>Search</Typography>
-                <TextField id="searchText" value={this.state.input} onChange={this.handleInput}></TextField>
-                <Popper open={this.state.renderMenu} anchorEl={() => document.getElementById('searchText')} >
+                <TextField className={classes.searchField} id="searchText" value={this.state.input} onChange={this.handleInput}></TextField>
+                <Popper  open={this.state.renderMenu} anchorEl={() => document.getElementById('searchText')} >
                     {this.state.suggestions.map((item) => {
-                        return (<Paper key={item._id} onClick={() => this.handleClick(item._source.text)}>
+                        return (<Paper className = {classes.dropdown} key={item._id} onClick={() => this.handleClick(item._source.text)}>
                             <MenuItem className='typhography'>{item._source.text}</MenuItem>
                         </Paper>)
                     })}
@@ -79,4 +93,4 @@ class SearchField extends Component {
 };
 
 
-export default SearchField;
+export default withStyles(styles)(SearchField);
