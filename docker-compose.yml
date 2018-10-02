@@ -1,0 +1,39 @@
+version: '3.3'
+
+services:
+  server:
+    build: server
+    links:
+      - "elasticsearch:elasticsearch"
+    volumes:
+      - ./server:/server
+    ports:
+      - "8000:8000"
+    depends_on:
+      - elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.4.1
+    command: elasticsearch
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node    
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+
+  client:
+    build: client
+    ports:
+      - "3000:3000"
+    links:
+      - "server:server"
+    volumes:
+      - ./client:/client
+
+volumes:
+  esdata:
+    driver: local

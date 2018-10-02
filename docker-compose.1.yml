@@ -1,0 +1,32 @@
+elasticsearch:
+  image: elasticsearch:latest
+  command: elasticsearch
+  ports:
+    - "9200:9200"
+    - "9300:9300"    
+  volumes:
+    - data:/usr/share/elasticsearch/data
+
+server:
+  build: server
+  ports:
+    - "8000:8000"
+  links:
+    - elasticsearch:elasticsearch
+  volumes:
+    - ./server:/server
+
+client:
+  build: client
+  ports:
+    - "3000:3000"
+  links:
+    - server:server
+  volumes:
+    - ./client:/client
+
+data:
+  image: cogniteev/echo
+  command: echo 'Data Container for Elasticsearch'
+  volumes:
+    - /Users/nli/tmp/elasticsearch/data
