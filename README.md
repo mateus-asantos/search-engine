@@ -1,7 +1,7 @@
-Jusbrasil internship challenge
+**Jusbrasil internship challenge**
 
 
 - Elasticsearch search engine
-- NodeJs(express) api
+- NodeJs(express) API
 - React UI
 - Docker-ready
