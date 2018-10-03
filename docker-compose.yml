@@ -1,17 +1,6 @@
 version: '3.3'
 
 services:
-  server:
-    build: server
-    links:
-      - "elasticsearch:elasticsearch"
-    volumes:
-      - ./server:/server
-    ports:
-      - "8000:8000"
-    depends_on:
-      - elasticsearch
-
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.4.1
     command: elasticsearch
@@ -24,6 +13,19 @@ services:
       - discovery.type=single-node    
     volumes:
       - esdata:/usr/share/elasticsearch/data
+
+
+  server:
+    build: server
+    links:
+      - "elasticsearch:elasticsearch"
+    volumes:
+      - ./server:/server
+    ports:
+      - "8000:8000"
+    depends_on:
+      - elasticsearch
+
 
 
   client:

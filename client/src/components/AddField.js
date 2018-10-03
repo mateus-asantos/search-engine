@@ -38,10 +38,9 @@ class AddField extends Component {
     render() {
         return (
             <div>
-                <Typography variant='h3'>Add</Typography>
+                <Typography variant='display1'>Add</Typography>
                 <TextField value={this.state.input} onChange={this.handleInput}></TextField><IconButton onClick={this.handleClick}><SvgIcon><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></SvgIcon></IconButton>
             </div>
-
         )
     }
 

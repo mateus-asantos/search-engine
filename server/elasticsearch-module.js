@@ -109,6 +109,11 @@ const initDB = () => {
         } else {
             initIndex('entities')
         }
+    },(error)=>{
+        setTimeout(()=>{
+            console.log("waiting for elasticSearch", error)
+            initDB()
+        },10000)
     })
 }
 exports.initDB = initDB;

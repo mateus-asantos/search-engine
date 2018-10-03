@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
-import { Paper, Fade, Typography, TextField, Popper, MenuItem } from '@material-ui/core'
+import { Paper, Typography, TextField, Popper, MenuItem } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles';
 import axios from 'axios'
-import zIndex from '@material-ui/core/styles/zIndex';
 
 const styles = (theme) => ({
     searchField: {
@@ -26,7 +25,6 @@ class SearchField extends Component {
     };
 
     fetchSuggestions = async (input) => {
-        let result = []
         const options = {
             method: 'post',
             url: '/suggest',
@@ -39,17 +37,14 @@ class SearchField extends Component {
         await axios(options).then((response) => {
             console.log('response', response.data.hits.hits)
             this.setState({ ...this.state, suggestions: response.data.hits.hits })
-            //result = response.data
         })
 
 
-        //console.log('result', result)
-        //return result
     };
 
 
     handleInput = (event) => {
-        event.target.value ? (this.setState({
+        !!event.target.value ? (this.setState({
             ...this.state,
             input: event.target.value,
             renderMenu: true
@@ -76,12 +71,12 @@ class SearchField extends Component {
         console.log('suggestions', this.state.suggestions)
         return (
             <div>
-                <Typography variant='h3'>Search</Typography>
+                <Typography variant='display1'>Search</Typography>
                 <TextField className={classes.searchField} id="searchText" value={this.state.input} onChange={this.handleInput}></TextField>
                 <Popper  open={this.state.renderMenu} anchorEl={() => document.getElementById('searchText')} >
                     {this.state.suggestions.map((item) => {
                         return (<Paper className = {classes.dropdown} key={item._id} onClick={() => this.handleClick(item._source.text)}>
-                            <MenuItem className='typhography'>{item._source.text}</MenuItem>
+                            <MenuItem >{item._source.text}</MenuItem>
                         </Paper>)
                     })}
                 </Popper>
