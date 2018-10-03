@@ -19,8 +19,6 @@ services:
     build: server
     links:
       - "elasticsearch:elasticsearch"
-    volumes:
-      - ./server:/server
     ports:
       - "8000:8000"
     depends_on:
@@ -34,8 +32,6 @@ services:
       - "3000:3000"
     links:
       - "server:server"
-    volumes:
-      - ./client:/client
 
 volumes:
   esdata:

@@ -6,11 +6,14 @@ RUN mkdir /server
 
 RUN npm install nodemon -g
 
-WORKDIR /server
+COPY package.json /server/
 
-ADD / /server
+WORKDIR /server/
+
+ADD . /server/
 
 RUN npm install
+RUN npm install --save http-errors
 
 EXPOSE 8000
 
