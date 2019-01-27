@@ -7,10 +7,10 @@ const elasticClient = new elasticsearch.Client({
 
 
 
-const addDocument = (entry, indexName) => {
+const addValue = (entry, indexName="entities") => {
     console.log(entry.body)
     return elasticClient.index({
-        index: indexName,
+        index: entry.body.type,
         type: "document",
         body: {
             text: entry.body.text,
@@ -21,8 +21,14 @@ const addDocument = (entry, indexName) => {
     });
 };
 
-exports.addDocument = addDocument;
+exports.addValue = addValue;
 
+const getMappings = (indexName = "entities") => {
+    console.log("getting mappings")
+    return(elasticClient.indices.getMapping({index: indexName}))
+}
+
+exports.getMappings = getMappings;
 
 const initIndex = (indexName) => {
     return elasticClient.indices.create({
@@ -53,13 +59,15 @@ const initIndex = (indexName) => {
 
 exports.initIndex = initIndex;
 
-const putMappings = indexName => {
+const putMappings = (indexName = "entities", typeName = "document") => {
     console.log('-------------------mapping--------------------------')
+    console.log(indexName)
+    console.log(typeName)
     return elasticClient.indices.putMapping({
         index: indexName,
-        type: 'document',
+        type: typeName,
         body: {
-            "document": {
+            [typeName]: {
                 "properties": {
                     "text": {
                         "type": "text",
@@ -70,11 +78,12 @@ const putMappings = indexName => {
         }
     })
 }
+exports.putMappings = putMappings;
 
 const getSuggestions = (input, indexName) => {
     return elasticClient.search({
         index: indexName,
-        q: input.text
+        q: input
     })
 
 };
@@ -100,6 +109,12 @@ const deleteIndex = (indexName) => {
 
 exports.deleteIndex = deleteIndex;
 
+const getIndices = () =>{
+    return elasticClient.indices.getAlias({
+        index:"_all",
+    })
+}
+exports.getIndices = getIndices;
 
 const initDB = () => {
     console.log('------------init------------------')
