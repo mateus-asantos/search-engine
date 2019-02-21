@@ -57,7 +57,7 @@ class AddField extends Component {
     handleAddTypeClick = async () => {
         const options = {
             method: 'post',
-            url: 'https://search-engine-server.herokuapp.com/initindex',
+            url: 'http://localhost:3000/initindex',
             data: JSON.stringify({
                 'text': this.state.addTypeInput,
             }),
@@ -81,7 +81,7 @@ class AddField extends Component {
     handleAddEntryClick = async () => {
         const options = {
             method: 'post',
-            url: 'https://search-engine-server.herokuapp.com/addvalue',
+            url: 'http://localhost:3000/addvalue',
             data: JSON.stringify({
                 'text': this.state.input,
                 'type': this.state.typeInput
@@ -104,7 +104,7 @@ class AddField extends Component {
     fetchTypes = async () => {
         const options = {
             method: 'get',
-            url: 'https://search-engine-server.herokuapp.com/getindices',
+            url: 'http://localhost:3000/getindices',
         }
 
         await axios(options).then((response) => {

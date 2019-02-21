@@ -20,7 +20,7 @@ class SearchField extends Component {
     fetchSuggestions = async (input) => {
         const options = {
             method: 'post',
-            url: 'https://search-engine-server.herokuapp.com/suggest',
+            url: 'http://localhost:3000/suggest',
             data: JSON.stringify({ "text": input, "typeName": this.state.typeFilter }),
             headers: {
                 'Content-Type': 'application/json'
@@ -55,7 +55,7 @@ class SearchField extends Component {
     fetchTypes = async () => {
         const options = {
             method: 'get',
-            url: 'https://search-engine-server.herokuapp.com/getindices',
+            url: 'http://localhost:3000/getindices',
         }
 
         await axios(options).then((response) => {
