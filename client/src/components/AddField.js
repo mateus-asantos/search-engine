@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { TextField, IconButton, SvgIcon, Select, Input, MenuItem, FormHelperText, FormControl } from '@material-ui/core';
+import { TextField, Button, Select, MenuItem, FormHelperText, FormControl, Typography } from '@material-ui/core';
 import axios from 'axios';
 
 class AddField extends Component {
@@ -57,7 +57,7 @@ class AddField extends Component {
     handleAddTypeClick = async () => {
         const options = {
             method: 'post',
-            url: 'http://localhost:8000/initindex',
+            url: 'https://search-engine-server.herokuapp.com/initindex',
             data: JSON.stringify({
                 'text': this.state.addTypeInput,
             }),
@@ -70,9 +70,10 @@ class AddField extends Component {
         await axios(options).then((response) => {
             console.log(response)
             this.setState({
-                addTypeInput: ''
-            }),
-                this.fetchTypes()
+                showAddTypeField: false,
+                addTypeInput: '',
+            })
+            this.fetchTypes()
         })
     }
 
@@ -80,7 +81,7 @@ class AddField extends Component {
     handleAddEntryClick = async () => {
         const options = {
             method: 'post',
-            url: 'http://localhost:8000/addvalue',
+            url: 'https://search-engine-server.herokuapp.com/addvalue',
             data: JSON.stringify({
                 'text': this.state.input,
                 'type': this.state.typeInput
@@ -103,30 +104,36 @@ class AddField extends Component {
     fetchTypes = async () => {
         const options = {
             method: 'get',
-            url: 'http://localhost:8000/getindices',
+            url: 'https://search-engine-server.herokuapp.com/getindices',
         }
 
         await axios(options).then((response) => {
-            console.log("response", response.data)
+            console.log("types response", response.data)
             this.setState({
-                types: response.data
-            }), console.log("state after fetch types", this.state)
+                types:
+                    Object.entries(response.data).map(item => {
+                        return (<MenuItem key={item[0]} className="Item" value={item[0]}>{item[0]}</MenuItem>)
+                    })
+            })
+            this.props.onRequestTypes()
         })
     }
-
-
 
     render() {
         window.addEventListener("load", () => {
             this.fetchTypes()
-        }), console.log(Object.entries(this.state.types)[0])
-        if (this.state.typeInput === "All") {
-            this.setState({ typeInput: "" })
-        }
+        })
+        /*         if (this.state.typeInput === "All") {
+                    this.setState({ typeInput: "" })
+                } */
         return (
             <div className="form">
-                <TextField className="Add" placeholder="Add Entry" value={this.state.input} onChange={this.handleInput}></TextField><IconButton className="Add_Button" onClick={this.handleAddEntryClick}><SvgIcon><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></SvgIcon></IconButton>
-
+                <FormControl className="subform">
+                    <div className="subform2 Add">
+                        <TextField value={this.state.input} onChange={this.handleInput} color="primary"></TextField>
+                        <FormHelperText>Write the text that you want to add</FormHelperText>
+                    </div>
+                </FormControl>
                 <FormControl className="form" >
 
                     <Select
@@ -136,16 +143,10 @@ class AddField extends Component {
                         value={this.state.typeInput}
                         onChange={this.handleTypeChange}
                         name="type"
-                        displayEmpty
-                        className="Select">
+                        className="Select"
+                        color="primary">
 
-                        <MenuItem value="All">All</MenuItem>
-
-                        {
-                            Object.entries(this.state.types).map(item => {
-                                return (<MenuItem key={item[0]} className="Item" value={item[0]}>{item[0]}</MenuItem>)
-                            })
-                        }
+                        {this.state.types}
 
                         <MenuItem value="Add Type" className="Add_Type_Item">
                             <strong>Add Type</strong>
@@ -153,21 +154,33 @@ class AddField extends Component {
                     </Select>
 
                     <FormHelperText>Select the Type</FormHelperText>
-
-                    {this.state.showAddTypeField ? <div className="NTextField">
-
-                        <TextField
-                            className="Add"
-                            placeholder="Add a new Type"
-                            value={this.state.addTypeInput}
-                            onChange={this.handleAddTypeInput}>
-                        </TextField>
-
-                        <IconButton className="Add_Button" onClick={this.handleAddTypeClick}><SvgIcon><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" /></SvgIcon></IconButton>
-
-                    </div> : null}
-
                 </FormControl>
+                <Button
+                    className="Add_Button"
+                    onClick={this.handleAddEntryClick}
+                    variant="contained"
+                    color="primary"
+                ><strong>Add</strong></Button>
+                {this.state.showAddTypeField ? <div className="NTextField">
+
+
+                    <TextField
+                        className="Add"
+                        placeholder="Add a new Type"
+                        value={this.state.addTypeInput}
+                        onChange={this.handleAddTypeInput}>
+                    </TextField>
+
+                    <Button
+                        className="Add_Button"
+                        onClick={this.handleAddTypeClick}
+                        variant="contained"
+                        color="primary"
+                    ><strong>Add</strong></Button>
+
+                </div> : null}
+
+
             </div>
         )
     };

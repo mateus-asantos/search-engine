@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Paper, TextField, Popper, MenuItem, Select, FormHelperText,FormControl } from '@material-ui/core'
+import { Paper, TextField, Typography, Popper, MenuItem, Select, FormHelperText, FormControl } from '@material-ui/core'
 import axios from 'axios'
 
 
@@ -20,7 +20,7 @@ class SearchField extends Component {
     fetchSuggestions = async (input) => {
         const options = {
             method: 'post',
-            url: '/suggest',
+            url: 'https://search-engine-server.herokuapp.com/suggest',
             data: JSON.stringify({ "text": input, "typeName": this.state.typeFilter }),
             headers: {
                 'Content-Type': 'application/json'
@@ -55,29 +55,30 @@ class SearchField extends Component {
     fetchTypes = async () => {
         const options = {
             method: 'get',
-            url: '/getindices',
+            url: 'https://search-engine-server.herokuapp.com/getindices',
         }
 
         await axios(options).then((response) => {
             console.log("response", response.data)
             this.setState({
                 types: response.data
-            }), console.log("state after fetch types", this.state)
+            })
         })
     }
 
     handleInput = (event) => {
-        !!event.target.value ? (this.setState({
-            ...this.state,
-            input: event.target.value,
-            renderMenu: true
-        }), this.fetchSuggestions(event.target.value)
-        ) : this.setState({
-            ...this.state,
-            input: event.target.value,
-            renderMenu: false
-        })
-
+        if (!!event.target.value) {
+            this.setState({
+                input: event.target.value,
+                renderMenu: true
+            }), this.fetchSuggestions(event.target.value)
+        } else {
+            this.setState({
+                ...this.state,
+                input: event.target.value,
+                renderMenu: false
+            })
+        }
     };
 
 
@@ -88,27 +89,34 @@ class SearchField extends Component {
             renderMenu: false
         })
     }
-
+    componentDidMount() {
+        this.fetchTypes()
+    }
+    componentWillReceiveProps() {
+        this.fetchTypes()
+    }
     render() {
         window.addEventListener("load", () => {
             this.fetchTypes()
         }), console.log(Object.entries(this.state.types)[0])
         console.log('suggestions', this.state.suggestions)
-
         return (
             <div className="form">
+                <FormControl className="subform">
+                    <div className="subform2 Add">
+                        <TextField className="searchField" id="searchText" value={this.state.input} onChange={this.handleInput}></TextField>
+                        <Popper open={this.state.renderMenu} anchorEl={() => document.getElementById('searchText')} >
+                            {this.state.suggestions.map((item) => {
+                                return (<Paper className="dropdown" key={item._id} onClick={() => this.handleClick(item._source.text)}>
+                                    <MenuItem >{item._source.text}</MenuItem>
+                                </Paper>)
+                            })}
+                        </Popper>
+                        <Popper open={this.state.renderFilterMenu} anchorEl={() => document.getElementById('searchText')}></Popper>
+                        <FormHelperText>Now search for them</FormHelperText>
+                    </div>
+                </FormControl>
                 <FormControl>
-
-                    <TextField placeholder="Search" className="searchField" id="searchText" value={this.state.input} onChange={this.handleInput}></TextField>
-                    <Popper open={this.state.renderMenu} anchorEl={() => document.getElementById('searchText')} >
-                        {this.state.suggestions.map((item) => {
-                            return (<Paper className="dropdown" key={item._id} onClick={() => this.handleClick(item._source.text)}>
-                                <MenuItem >{item._source.text}</MenuItem>
-                            </Paper>)
-                        })}
-                    </Popper>
-                    <Popper open={this.state.renderFilterMenu} anchorEl={() => document.getElementById('searchText')}></Popper>
-
                     <Select
                         open={this.state.selectOpen}
                         onClose={this.handleClose}
@@ -130,6 +138,7 @@ class SearchField extends Component {
 
                     <FormHelperText>Filter by Type</FormHelperText>
                 </FormControl>
+
 
             </div>
         )
