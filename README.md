@@ -1,5 +1,3 @@
-## Jusbrasil internship challenge
-
 #### Run with docker-compose build & docker-compose up.
 
 
